@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Breathing Room – Student Support Hub</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:wght@500;600&family=Public+Sans:wght@400;500;600&display=swap">
+
+<style>
+/* ===== 1. COLOURS =====
+   Change a colour here and it changes everywhere on the page. */
+:root{
+  --bg:#F2F6F6; --card:#FFFFFF; --text:#1B3640; --muted:#52696F;
+  --line:#D3E0E1; --accent:#2A7A82; --soft:#DDEDEE;
+  --alert:#8E3B2E; --alert-bg:#F8E7E3;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+/* Dark mode colours (used automatically if the phone/laptop is in dark mode) */
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--bg:#0F1D22;--card:#162A31;--text:#E4EFF0;--muted:#9DB5B9;--line:#264047;--accent:#5FBAC2;--soft:#1E3A41;--alert:#F0B5A8;--alert-bg:#3A2420}
+}
+:root[data-theme="dark"]{--bg:#0F1D22;--card:#162A31;--text:#E4EFF0;--muted:#9DB5B9;--line:#264047;--accent:#5FBAC2;--soft:#1E3A41;--alert:#F0B5A8;--alert-bg:#3A2420}
+
+/* ===== 2. BASIC PAGE STYLE ===== */
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 "Public Sans",system-ui,sans-serif}
+h1,h2,h3{font-family:"Newsreader",Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h1{font-size:clamp(2rem,6vw,3rem)}
+h2{font-size:1.6rem}
+p{margin:0 0 1em;max-width:62ch}
+a{color:var(--accent)}
+.wrap{max-width:860px;margin:0 auto;padding:0 20px}   /* keeps content centred */
+section{padding:36px 0;border-top:1px solid var(--line)}
+
+/* ===== 3. TOP BAR + QUICK EXIT ===== */
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);border-bottom:1px solid var(--line);z-index:5}
+.topbar .wrap{display:flex;justify-content:space-between;align-items:center;padding-top:10px;padding-bottom:10px;gap:12px}
+.topbar nav a{margin-right:14px;text-decoration:none;color:var(--muted)}
+.exit{background:var(--alert-bg);color:var(--alert);border:1px solid var(--alert);border-radius:8px;padding:6px 12px;font-weight:600;font-size:.85rem;text-decoration:none;white-space:nowrap}
+
+/* ===== 4. BOXES ===== */
+.privacy{background:var(--soft);border-radius:12px;padding:14px 16px;max-width:62ch}
+.crisis{background:var(--alert-bg);color:var(--alert);border-left:5px solid var(--alert);padding:16px 18px;border-radius:0 12px 12px 0;margin:24px 0}
+.crisis p{margin:0 0 .4em}
+.crisis a{color:inherit;font-weight:600}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px}
+
+/* ===== 5. "HOW ARE YOU FEELING?" (no JavaScript needed) =====
+   Trick: a hidden radio button + a label. When a radio is :checked,
+   CSS shows the matching answer box that comes after it. */
+.feel input{position:absolute;opacity:0}                /* hide the round radio button */
+.feel label{display:inline-block;border:1.5px solid var(--line);border-radius:999px;padding:8px 16px;margin:0 8px 8px 0;cursor:pointer}
+.feel input:checked + label{background:var(--accent);color:#fff;border-color:var(--accent)}
+.feel input:focus-visible + label{outline:3px solid var(--accent);outline-offset:2px}
+.answer{display:none;margin-top:14px;background:var(--soft);border-radius:12px;padding:16px 18px}
+.answer p:last-child{margin-bottom:0}
+#f1:checked ~ .a1, #f2:checked ~ .a2, #f3:checked ~ .a3{display:block}
+
+/* ===== 6. BREATHING CIRCLE (CSS animation, 12 seconds per breath) =====
+   0%-33% grows (breathe in), 33%-50% stays big (hold), 50%-100% shrinks (breathe out) */
+.breathing{text-align:center}
+.circle{width:140px;height:140px;margin:30px auto;border-radius:50%;background:var(--soft);border:3px solid var(--accent);animation:breathe 12s ease-in-out infinite}
+@keyframes breathe{
+  0%{transform:scale(1)}
+  33%{transform:scale(1.4)}
+  50%{transform:scale(1.4)}
+  100%{transform:scale(1)}
+}
+@media (prefers-reduced-motion:reduce){.circle{animation:none}}
+
+/* ===== 7. TIPS (click to open) ===== */
+details{border-top:1px solid var(--line);padding:10px 0}
+summary{cursor:pointer;font-weight:600}
+details p,details ul{color:var(--muted);margin:.6em 0 0}
+
+/* ===== 8. CAMPUS SERVICE CARDS ===== */
+.cards{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.card h3{font-size:1.1rem;margin-bottom:.3em}
+.card p{color:var(--muted);font-size:.95rem;margin-bottom:.6em}
+.card .info{font-size:.92rem;margin:0;color:var(--text)}
+.tag{display:inline-block;background:var(--soft);border-radius:6px;padding:1px 8px;font-size:.8rem}
+.note{font-size:.85rem;color:var(--muted)}
+footer{padding:24px 0 48px;color:var(--muted);font-size:.88rem}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+
+<body>
+
+<!-- ===== TOP BAR ===== -->
+<div class="topbar"><div class="wrap">
+  <nav>
+    <a href="#feeling">How I feel</a>
+    <a href="#tools">Self-help</a>
+    <a href="#campus">Campus help</a>
+  </nav>
+  <!-- QUICK EXIT: opens another site right away. Change the link if you like. -->
+  <a class="exit" href="https://www.google.com">Quick exit</a>
+</div></div>
+
+<main class="wrap">
+
+  <!-- ===== INTRO ===== -->
+  <header style="padding:44px 0 24px">
+    <h1>Breathing Room</h1>
+    <p>Feeling stressed about exams, assignments, hostel life or just everything? You're not alone, and it's normal in first year. This page helps you figure out what's going on and who to talk to.</p>
+    <p class="privacy"><strong>100% private.</strong> This page doesn't save or send anything you click. Close the tab and it's gone. Need to leave fast? Tap "Quick exit" at the top.</p>
+
+    <div class="crisis">
+      <p><strong>In danger, or thinking about ending your life?</strong></p>
+      <p>Call your local emergency number right now. In India, <a href="tel:14416">Tele-MANAS: 14416</a> is free, open 24/7 and available in many languages. Other countries: <a href="https://findahelpline.com">findahelpline.com</a>.</p>
+    </div>
+  </header>
+
+  <!-- ===== HOW AM I FEELING? ===== -->
+  <section id="feeling">
+    <h2>How are you feeling lately?</h2>
+    <p>Pick the one that sounds most like you. There's no wrong answer.</p>
+
+    <div class="box feel">
+      <!-- Each radio's id (f1, f2, f3) must match the CSS rule in section 5 -->
+      <input type="radio" name="feel" id="f1"><label for="f1">A bit stressed</label>
+      <input type="radio" name="feel" id="f2"><label for="f2">Overwhelmed</label>
+      <input type="radio" name="feel" id="f3"><label for="f3">I'm really struggling</label>
+
+      <div class="answer a1">
+        <p><strong>That's very normal.</strong> Tests and deadlines stack up fast in first year.</p>
+        <p>Try the <a href="#tools">breathing exercise</a>, make a small to-do list, and sleep properly. If it keeps going for more than a week or two, talk to a friend or mentor.</p>
+      </div>
+      <div class="answer a2">
+        <p><strong>Feeling overwhelmed is a sign to get support, not a sign you're weak.</strong></p>
+        <p>Use the <a href="#tools">tips below</a> to calm down first. Then reach out to a <a href="#campus">peer mentor or academic advisor</a> and tell them what you have going on. They deal with this all the time.</p>
+      </div>
+      <div class="answer a3">
+        <p><strong>Thank you for being honest about it. You deserve real support.</strong></p>
+        <p>Please book a chat with the <a href="#campus">campus counselling centre</a> this week. Counselling is confidential and you don't need to be "bad enough" to go. If you ever feel unsafe, use the helpline at the top of this page right away.</p>
+      </div>
+    </div>
+    <p class="note" style="margin-top:12px">This isn't a medical test. It's just a nudge towards the right next step.</p>
+  </section>
+
+  <!-- ===== SELF-HELP ===== -->
+  <section id="tools">
+    <h2>Things you can try right now</h2>
+
+    <div class="box breathing">
+      <h3>Slow breathing (about 2 minutes)</h3>
+      <p style="margin:0 auto">Watch the circle. <strong>Breathe in while it grows, hold for a moment, breathe out slowly while it shrinks.</strong> Repeat about 10 times.</p>
+      <div class="circle" aria-hidden="true"></div>
+    </div>
+
+    <div class="box" style="margin-top:18px">
+      <h3>More quick help</h3>
+      <details>
+        <summary>Mind racing? Try 5-4-3-2-1</summary>
+        <p>Name 5 things you can see, 4 you can touch, 3 you can hear, 2 you can smell and 1 you can taste. It pulls your attention back to the room.</p>
+      </details>
+      <details>
+        <summary>Too much to study</summary>
+        <ul>
+          <li>Write down everything, then pick the one thing due first.</li>
+          <li>Study 25 minutes, rest 5 minutes, repeat.</li>
+          <li>Ask your professor for help early, before a deadline.</li>
+        </ul>
+      </details>
+      <details>
+        <summary>Can't sleep</summary>
+        <ul>
+          <li>Wake up at the same time every day.</li>
+          <li>Keep your phone away for the last 30 minutes before bed.</li>
+          <li>Go for a short walk. It helps more than studying tired.</li>
+        </ul>
+      </details>
+      <details>
+        <summary>How do I start talking to someone?</summary>
+        <p>You can simply say: "I've been struggling lately and could use some help." That's enough to start.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ===== CAMPUS SUPPORT =====
+       TO EDIT: change the text inside each <div class="card"> below.
+       To add a service, copy one whole card (from <div class="card"> to its </div>) and paste it. -->
+  <section id="campus">
+    <h2>Who can help on campus</h2>
+    <p>These services are meant for students like you. Most are confidential, and you can ask them what stays private.</p>
+
+    <div class="cards">
+
+      <div class="card">
+        <h3>Student counselling centre</h3>
+        <span class="tag">Free</span> <span class="tag">Confidential</span>
+        <p>Talk one-to-one with a trained counsellor about stress, anxiety, low mood or relationships.</p>
+        <p class="info">Phone: <a href="tel:0000000000">ADD PHONE</a><br>Email: ADD EMAIL<br>Hours: ADD HOURS</p>
+      </div>
+
+      <div class="card">
+        <h3>Campus health centre</h3>
+        <span class="tag">Medical</span>
+        <p>Doctors can help with sleep problems, headaches, tiredness and referrals.</p>
+        <p class="info">Phone: <a href="tel:0000000000">ADD PHONE</a><br>Hours: ADD HOURS</p>
+      </div>
+
+      <div class="card">
+        <h3>Academic advisor</h3>
+        <span class="tag">Academics</span>
+        <p>Help with heavy workload, backlogs, deadlines or exam accommodations.</p>
+        <p class="info">Email: ADD EMAIL<br>Office: ADD LOCATION</p>
+      </div>
+
+      <div class="card">
+        <h3>Peer mentors</h3>
+        <span class="tag">Student-to-student</span>
+        <p>Senior students who listen and know the campus. A good first step if you're nervous.</p>
+        <p class="info">Contact: ADD DETAILS</p>
+      </div>
+
+      <div class="card">
+        <h3>Hostel warden</h3>
+        <span class="tag">Hostel</span>
+        <p>For problems with roommates, homesickness or safety in your hostel.</p>
+        <p class="info">Phone: <a href="tel:0000000000">ADD PHONE</a></p>
+      </div>
+
+      <div class="card">
+        <h3>Tele-MANAS helpline</h3>
+        <span class="tag">24/7</span> <span class="tag">Free</span>
+        <p>National mental health helpline. Talk to a trained counsellor any time, in many languages.</p>
+        <p class="info">Phone: <a href="tel:14416">14416</a><br><a href="https://telemanas.mohfw.gov.in">Visit website</a></p>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<footer><div class="wrap">This page gives general wellbeing information. It does not replace professional care.</div></footer>
+
+</body>
+</html>
